@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lịch Sử Học Thuyết Kinh Tế</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --cream-dark: #EDE5D5;
+    --ink: #1C1714;
+    --ink-soft: #3D3530;
+    --ink-muted: #7A6F68;
+    --ink-faint: #B0A89E;
+    --gold: #A8761A;
+    --gold-light: #F2E0B0;
+    --gold-pale: #FBF5E6;
+    --teal: #1A6B5C;
+    --teal-light: #D4EDE8;
+    --rose: #9B3A3A;
+    --rose-light: #F2DEDE;
+    --blue: #1A3A6B;
+    --blue-light: #D4DEF0;
+    --purple: #5A3A8B;
+    --purple-light: #E8DEF5;
+    --green: #2D6B2D;
+    --green-light: #D4EDD4;
+    --border: rgba(28,23,20,0.12);
+    --shadow: 0 4px 24px rgba(28,23,20,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 2.5rem 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 40px solid rgba(168,118,26,0.15);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 200px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 24px solid rgba(168,118,26,0.08);
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+  .header-sub {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  /* CONTROLS */
+  .controls {
+    background: var(--cream-dark);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .controls-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .era-btn {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .era-btn:hover { background: var(--cream); }
+  .era-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  /* ZOOM */
+  .zoom-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .zoom-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--cream);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .zoom-btn:hover { background: var(--ink); color: var(--cream); }
+
+  /* HINT */
+  .hint {
+    padding: 0.6rem 3rem;
+    font-size: 12px;
+    color: var(--ink-muted);
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  /* TIMELINE WRAPPER */
+  .timeline-wrapper {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 0;
+    cursor: grab;
+    user-select: none;
+  }
+  .timeline-wrapper:active { cursor: grabbing; }
+  .timeline-wrapper::-webkit-scrollbar { height: 6px; }
+  .timeline-wrapper::-webkit-scrollbar-track { background: var(--cream-dark); }
+  .timeline-wrapper::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 3px; }
+
+  .timeline-canvas {
+    position: relative;
+    padding: 3rem 4rem 4rem;
+    min-height: 600px;
+  }
+
+  /* ERA BANDS */
+  .era-band {
+    position: absolute;
+    top: 0; bottom: 0;
+    opacity: 0.035;
+    transition: opacity 0.3s;
+  }
+  .era-band:hover { opacity: 0.06; }
+  .era-band-label {
+    position: absolute;
+    top: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    writing-mode: horizontal-tb;
+    color: var(--ink-muted);
+    opacity: 0.5;
+  }
+
+  /* AXIS */
+  .axis-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ink-faint) 5%, var(--ink-faint) 95%, transparent);
+    left: 0; right: 0;
+  }
+
+  /* YEAR TICKS */
+  .year-tick {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+  }
+  .year-tick-line {
+    width: 1px;
+    background: var(--ink-faint);
+    opacity: 0.5;
+  }
+  .year-tick-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+
+  /* EVENT CARDS */
+  .event-card {
+    position: absolute;
+    width: 200px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 14px 16px 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    transform-origin: bottom center;
+  }
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: rgba(28,23,20,0.25);
+    z-index: 10;
+  }
+  .event-card.milestone {
+    border-width: 2px;
+    width: 220px;
+  }
+  .event-card.below { transform-origin: top center; }
+  .event-card.below:hover { transform: translateY(4px); }
+
+  .card-milestone-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .card-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .card-figure {
+    font-size: 12px;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .card-hint {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 8px;
+  }
+
+  /* CONNECTOR LINES */
+  .connector {
+    position: absolute;
+    width: 2px;
+    background: var(--border);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  /* NODE DOT */
+  .node-dot {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--cream);
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 5;
+  }
+  .node-dot:hover { transform: translate(-50%, -50%) scale(1.5); }
+  .node-dot.milestone-dot {
+    width: 16px; height: 16px;
+  }
+
+  /* ERA SEGMENT on axis */
+  .era-segment {
+    position: absolute;
+    height: 6px;
+    border-radius: 3px;
+    transform: translateY(-50%);
+    opacity: 0.7;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,23,20,0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--cream);
+    border-radius: 12px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(28,23,20,0.3);
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    padding: 1.75rem 2rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-era-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  .modal-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .modal-figure {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+  .modal-body {
+    padding: 1.5rem 2rem;
+  }
+  .modal-desc {
+    font-size: 15px;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    color: var(--ink-soft);
+  }
+  .modal-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+  .modal-ideas {
+    list-style: none;
+    margin-bottom: 1.25rem;
+  }
+  .modal-ideas li {
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 6px 0 6px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    position: relative;
+  }
+  .modal-ideas li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--ink-faint);
+  }
+  .modal-works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+  .work-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--cream-dark);
+    font-style: italic;
+  }
+  .modal-influence {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-muted);
+    padding: 10px 14px;
+    background: var(--cream-dark);
+    border-radius: 6px;
+    border-left: 3px solid var(--gold);
+  }
+  .modal-close {
+    display: block;
+    margin: 0 2rem 1.5rem auto;
+    padding: 8px 20px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .modal-close:hover { opacity: 0.8; }
+
+  /* ESC hint */
+  .esc-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+
+  /* LEGEND */
+  .legend {
+    padding: 1.5rem 3rem;
+    background: var(--cream-dark);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .legend-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-right: 0.5rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 24px; height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Timeline tương tác · Lịch sử tư tưởng</div>
+  <h1>Lịch Sử Học Thuyết Kinh Tế</h1>
+  <div class="header-sub">Từ triết học cổ đại đến kinh tế học hiện đại — kéo ngang để khám phá · nhấp vào sự kiện để xem chi tiết</div>
+</div>
+
+<div class="controls" id="controls">
+  <span class="controls-label">Giai đoạn:</span>
+  <button class="era-btn active" onclick="jumpToEra('all')">Toàn cảnh</button>
+  <button class="era-btn" onclick="jumpToEra('ancient')">Cổ đại</button>
+  <button class="era-btn" onclick="jumpToEra('mercantile')">Trọng thương</button>
+  <button class="era-btn" onclick="jumpToEra('classical')">Cổ điển</button>
+  <button class="era-btn" onclick="jumpToEra('neoclassical')">Tân cổ điển</button>
+  <button class="era-btn" onclick="jumpToEra('modern')">Hiện đại</button>
+  <button class="era-btn" onclick="jumpToEra('contemporary')">Đương đại</button>
+  <div class="zoom-controls">
+    <span class="controls-label">Thu phóng:</span>
+    <button class="zoom-btn" onclick="changeZoom(-0.15)" title="Thu nhỏ">−</button>
+    <button class="zoom-btn" onclick="changeZoom(0.15)" title="Phóng to">+</button>
+  </div>
+</div>
+
+<div class="hint" id="hint">
+  · Kéo trái/phải để di chuyển · Nhấp vào thẻ sự kiện để xem chi tiết · Phím ← → để di chuyển · Esc để đóng · <span id="zoom-label">Thu phóng: 1.0×</span>
+</div>
+
+<div class="timeline-wrapper" id="timelineWrapper">
+  <div class="timeline-canvas" id="canvas"></div>
+</div>
+
+<div class="legend">
+  <span class="legend-title">Chú giải:</span>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#A8761A; width:16px;height:16px;border:2px solid #F5F0E8;"></div>
+    <span>Mốc chính</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#1A6B5C;"></div>
+    <span>Trường phái / Học thuyết</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#1A3A6B;"></div>
+    <span>Nhà kinh tế học</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#9B3A3A;"></div>
+    <span>Tác phẩm quan trọng</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#A8761A;"></div>
+    <span>Giai đoạn Trọng thương & Cổ điển</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#1A6B5C;"></div>
+    <span>Giai đoạn Tân cổ điển & Hiện đại</span>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header" id="modalHeader"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" onclick="closeModalDirect()">Đóng</button>
+    <div class="esc-hint">Nhấn Esc hoặc click ngoài để đóng</div>
+  </div>
+</div>
+
+<script>
+const EVENTS = [
+  {
+    id: 'aristotle', year: -350, label: 'K. 350 TCN', era: 'ancient',
+    milestone: true,
+    title: 'Aristotle — Nền tảng tư duy kinh tế',
+    figure: 'Aristotle (384–322 TCN)',
+    type: 'teal',
+    short: 'Phân biệt giá trị sử dụng / trao đổi',
+    desc: 'Aristotle là nhà tư tưởng đầu tiên phân tích có hệ thống các hiện tượng kinh tế. Ông phân biệt giữa kinh tế học (oikonomia — quản lý gia đình/cộng đồng) và chrematistics (nghệ thuật kiếm tiền), coi loại sau là không tự nhiên nếu vượt quá mức cần thiết.',
+    ideas: ['Phân biệt giá trị sử dụng và giá trị trao đổi', 'Phê phán cho vay nặng lãi (usury) là phi đạo đức', 'Trao đổi công bằng dựa trên nhu cầu của xã hội', 'Tiền tệ là công cụ nhân tạo, không sinh ra tiền tệ'],
+    works: ['Chính trị học (Politics)', 'Đạo đức Nicomachean (Nicomachean Ethics)'],
+    influence: 'Tư tưởng của Aristotle ảnh hưởng sâu sắc đến các nhà kinh tế học kinh viện thời Trung Cổ, đặc biệt là Thomas Aquinas, và đặt nền móng cho các tranh luận về "giá cả công bằng" kéo dài hàng thế kỷ.'
+  },
+  {
+    id: 'aquinas', year: 1270, label: '1270', era: 'ancient',
+    title: 'Thomas Aquinas — Giá cả công bằng',
+    figure: 'Thomas Aquinas (1225–1274)',
+    type: 'teal',
+    short: 'Học thuyết giá cả công bằng',
+    desc: 'Thomas Aquinas hệ thống hóa tư tưởng kinh tế Thiên Chúa giáo, phát triển học thuyết "giá cả công bằng" (just price). Ông cho rằng giá cả phải phản ánh công sức lao động và đảm bảo sự ổn định xã hội.',
+    ideas: ['Giá cả công bằng = giá thị trường thông thường', 'Lên án cho vay nặng lãi là tội lỗi', 'Kinh tế phải phục vụ mục tiêu đạo đức', 'Tư hữu tài sản là hợp lý nhưng phải phục vụ công ích'],
+    works: ['Summa Theologica'],
+    influence: 'Kinh tế học kinh viện (Scholastic economics) đặt nền tảng cho các tranh luận về đạo đức kinh tế trong thế kỷ sau và ảnh hưởng đến luật kinh tế Châu Âu.'
+  },
+  {
+    id: 'mercantilism', year: 1550, label: '1550–1776', era: 'mercantile',
+    milestone: true,
+    title: 'Chủ nghĩa Trọng thương',
+    figure: 'Thomas Mun, Jean-Baptiste Colbert...',
+    type: 'gold',
+    short: 'Xuất khẩu là nguồn thịnh vượng',
+    desc: 'Chủ nghĩa Trọng thương là hệ thống tư tưởng kinh tế thống trị Châu Âu từ thế kỷ 16–18. Học thuyết này cho rằng sự giàu có của quốc gia được đo bằng lượng vàng bạc dự trữ, và nhà nước cần can thiệp mạnh để đảm bảo xuất siêu.',
+    ideas: ['Thặng dư thương mại = tích lũy vàng bạc', 'Thuế quan bảo hộ để hạn chế nhập khẩu', 'Nhà nước cần kiểm soát chặt chẽ thương mại', 'Thuộc địa là nguồn nguyên liệu và thị trường tiêu thụ'],
+    works: ['England\'s Treasure by Forraign Trade — Thomas Mun (1664)'],
+    influence: 'Chính sách trọng thương định hình đế quốc thực dân Châu Âu. Bị Adam Smith phê phán toàn diện, nhưng nhiều yếu tố của nó vẫn tồn tại trong chính sách công nghiệp hiện đại.'
+  },
+  {
+    id: 'quesnay', year: 1758, label: '1758', era: 'mercantile',
+    title: 'Quesnay — Trọng nông & Tableau Économique',
+    figure: 'François Quesnay (1694–1774)',
+    type: 'blue',
+    short: 'Mô hình tuần hoàn kinh tế đầu tiên',
+    desc: 'François Quesnay, bác sĩ của vua Louis XV, sáng lập trường phái Trọng nông (Physiocracy). Ông cho rằng chỉ có nông nghiệp mới tạo ra giá trị thực sự, và xây dựng Tableau Économique — mô hình tuần hoàn kinh tế đầu tiên trong lịch sử.',
+    ideas: ['Chỉ nông nghiệp tạo ra "sản phẩm ròng" (produit net)', 'Thương nhân và thợ thủ công là "tầng lớp không sản xuất"', 'Laissez faire — để thị trường tự vận hành', 'Tableau Économique mô tả dòng chảy hàng hóa và tiền tệ'],
+    works: ['Tableau Économique (1758)'],
+    influence: 'Tableau Économique là tiền thân của các mô hình kinh tế vĩ mô hiện đại và bảng đầu vào-đầu ra (input-output). Trường phái Trọng nông cũng là nguồn cảm hứng trực tiếp cho Adam Smith.'
+  },
+  {
+    id: 'smith', year: 1776, label: '1776', era: 'classical',
+    milestone: true,
+    title: 'Adam Smith — Bàn tay vô hình',
+    figure: 'Adam Smith (1723–1790)',
+    type: 'gold',
+    short: '«Của cải của các Quốc gia»',
+    desc: 'Adam Smith xuất bản "Của cải của các Quốc gia" (The Wealth of Nations) năm 1776, đặt nền móng cho kinh tế học hiện đại. Ông lập luận rằng sự theo đuổi lợi ích cá nhân, khi hoạt động trong thị trường tự do, sẽ thúc đẩy phúc lợi xã hội thông qua "bàn tay vô hình".',
+    ideas: ['Bàn tay vô hình điều phối kinh tế thị trường', 'Phân công lao động là nguồn gốc tăng năng suất', 'Giá trị hàng hóa do lao động tạo ra (lý thuyết giá trị lao động)', 'Phê phán chủ nghĩa Trọng thương và bảo hộ mậu dịch', 'Tự do thương mại quốc tế mang lại lợi ích cho mọi bên'],
+    works: ['The Wealth of Nations (1776)', 'The Theory of Moral Sentiments (1759)'],
+    influence: 'Smith được coi là cha đẻ của kinh tế học hiện đại. Tác phẩm của ông là nền tảng của kinh tế học cổ điển và ảnh hưởng sâu sắc đến chính sách kinh tế thế giới trong hơn 200 năm qua.'
+  },
+  {
+    id: 'malthus', year: 1798, label: '1798', era: 'classical',
+    title: 'Malthus — Bẫy dân số',
+    figure: 'Thomas Robert Malthus (1766–1834)',
+    type: 'rose',
+    short: 'Dân số tăng nhanh hơn lương thực',
+    desc: 'Malthus đưa ra luận điểm gây tranh cãi: dân số có xu hướng tăng theo cấp số nhân trong khi lương thực chỉ tăng theo cấp số cộng, dẫn đến bẫy nghèo đói không thể thoát ra được nếu không có kiểm soát dân số.',
+    ideas: ['Dân số tăng theo cấp số nhân, lương thực tăng cấp số cộng', 'Bẫy Malthus: tăng thu nhập → tăng dân số → nghèo đói trở lại', 'Chiến tranh, dịch bệnh, nạn đói là "kiểm tra tự nhiên"', 'Nghi ngờ về tiến bộ và thịnh vượng dài hạn'],
+    works: ['An Essay on the Principle of Population (1798)'],
+    influence: 'Lý thuyết Malthus ảnh hưởng đến Darwin (thuyết tiến hóa), và vẫn được tranh luận trong bối cảnh biến đổi khí hậu và an ninh lương thực hiện đại.'
+  },
+  {
+    id: 'ricardo', year: 1817, label: '1817', era: 'classical',
+    milestone: true,
+    title: 'Ricardo — Lợi thế so sánh',
+    figure: 'David Ricardo (1772–1823)',
+    type: 'blue',
+    short: 'Nền tảng lý thuyết thương mại quốc tế',
+    desc: 'David Ricardo phát triển và hoàn thiện kinh tế học cổ điển. Nguyên lý lợi thế so sánh của ông chứng minh rằng thương mại tự do mang lại lợi ích cho tất cả các quốc gia, dù một nước có năng suất thấp hơn trong mọi lĩnh vực.',
+    ideas: ['Lý thuyết lợi thế so sánh trong thương mại quốc tế', 'Lý thuyết địa tô: địa tô tăng khi đất tốt trở nên khan hiếm', 'Quy luật lợi nhuận giảm dần', 'Phân phối thu nhập giữa giai cấp tư bản, địa chủ và lao động'],
+    works: ['On the Principles of Political Economy and Taxation (1817)'],
+    influence: 'Nguyên lý lợi thế so sánh là nền tảng lý luận của WTO và các hiệp định thương mại tự do hiện đại. Mô hình Ricardian vẫn được dạy trong mọi khóa học kinh tế quốc tế.'
+  },
+  {
+    id: 'mill', year: 1848, label: '1848', era: 'classical',
+    title: 'John Stuart Mill — Kinh tế chính trị học',
+    figure: 'John Stuart Mill (1806–1873)',
+    type: 'teal',
+    short: 'Tổng hợp cổ điển + cải cách xã hội',
+    desc: 'Mill là nhà kinh tế học cổ điển cuối cùng và vĩ đại nhất, đồng thời là người đặt nền móng cho kinh tế học phúc lợi. Ông phân biệt giữa các quy luật sản xuất (không thay đổi) và phân phối (có thể thay đổi qua chính sách).',
+    ideas: ['Phân biệt quy luật sản xuất và phân phối', 'Ủng hộ thuế lũy tiến và cải cách phân phối', 'Tự do cá nhân là nền tảng của sự phát triển', 'Phụ nữ cần có quyền bình đẳng kinh tế và chính trị'],
+    works: ['Principles of Political Economy (1848)', 'On Liberty (1859)', 'Utilitarianism (1863)'],
+    influence: 'Mill là cầu nối giữa kinh tế học cổ điển và phúc lợi xã hội, ảnh hưởng đến các nhà cải cách xã hội cuối thế kỷ 19 và kinh tế học phúc lợi thế kỷ 20.'
+  },
+  {
+    id: 'marx', year: 1867, label: '1867', era: 'classical',
+    milestone: true,
+    title: 'Karl Marx — Tư bản luận',
+    figure: 'Karl Marx (1818–1883)',
+    type: 'rose',
+    short: '«Das Kapital» — Phê phán chủ nghĩa tư bản',
+    desc: 'Karl Marx xây dựng lý thuyết kinh tế phê phán toàn diện hệ thống tư bản chủ nghĩa. Ông phân tích cơ chế bóc lột thông qua khái niệm "giá trị thặng dư" và dự đoán sự sụp đổ tất yếu của chủ nghĩa tư bản.',
+    ideas: ['Lý thuyết giá trị lao động — chỉ lao động tạo ra giá trị', 'Giá trị thặng dư: nguồn gốc lợi nhuận của nhà tư bản', 'Lịch sử là đấu tranh giai cấp', 'Xu hướng tỷ suất lợi nhuận giảm dần', 'Chủ nghĩa tư bản tất yếu sinh ra mâu thuẫn nội tại'],
+    works: ['Das Kapital — Tư bản luận (1867)', 'Tuyên ngôn Cộng sản (1848, cùng Engels)'],
+    influence: 'Tác phẩm của Marx định hình nền kinh tế của hơn 1/3 thế giới trong thế kỷ 20. Phân tích về khủng hoảng tư bản, bất bình đẳng và quyền lực kinh tế vẫn còn nguyên giá trị nghiên cứu.'
+  },
+  {
+    id: 'marginalist', year: 1871, label: '1871–1874', era: 'neoclassical',
+    milestone: true,
+    title: 'Cách mạng Cận biên',
+    figure: 'Jevons, Menger, Walras',
+    type: 'purple',
+    short: 'Giá trị xuất phát từ hữu dụng cận biên',
+    desc: 'Năm 1871–1874, ba nhà kinh tế độc lập nhau — William Stanley Jevons (Anh), Carl Menger (Áo), và Léon Walras (Pháp-Thụy Sĩ) — đồng thời khám phá ra nguyên lý hữu dụng cận biên, tạo ra cuộc cách mạng phương pháp trong kinh tế học.',
+    ideas: ['Giá trị hàng hóa do hữu dụng cận biên quyết định, không phải lao động', 'Quyết định kinh tế dựa trên "đơn vị cuối cùng" được tiêu thụ', 'Cân bằng tổng thể (Walras): mọi thị trường cân bằng đồng thời', 'Toán học hóa kinh tế học'],
+    works: ['Theory of Political Economy — Jevons (1871)', 'Principles of Economics — Menger (1871)', 'Éléments d\'économie politique pure — Walras (1874)'],
+    influence: 'Cách mạng cận biên đặt nền tảng cho kinh tế học tân cổ điển và toàn bộ vi kinh tế học hiện đại. Đây là bước ngoặt phương pháp luận quan trọng nhất trong lịch sử kinh tế học.'
+  },
+  {
+    id: 'marshall', year: 1890, label: '1890', era: 'neoclassical',
+    milestone: true,
+    title: 'Alfred Marshall — Vi kinh tế học hiện đại',
+    figure: 'Alfred Marshall (1842–1924)',
+    type: 'blue',
+    short: 'Cung — Cầu & Thặng dư tiêu dùng',
+    desc: 'Alfred Marshall tổng hợp kinh tế học cổ điển và cách mạng cận biên, tạo ra khung phân tích vi kinh tế được dạy trong mọi trường đại học đến ngày nay. Ông phổ biến biểu đồ cung-cầu và các khái niệm như độ co giãn, thặng dư tiêu dùng.',
+    ideas: ['Biểu đồ cung-cầu và điểm cân bằng thị trường', 'Độ co giãn của cung và cầu', 'Thặng dư tiêu dùng và thặng dư sản xuất', 'Phân tích cân bằng bộ phận (partial equilibrium)', 'Kinh tế học ngoại tác (externalities)'],
+    works: ['Principles of Economics (1890)'],
+    influence: 'Marshall là người định hình vi kinh tế học tân cổ điển. Công trình của ông là giáo trình kinh tế học tiêu chuẩn trong hơn 50 năm và đặt nền tảng cho phân tích chính sách giá cả hiện đại.'
+  },
+  {
+    id: 'veblen', year: 1899, label: '1899', era: 'neoclassical',
+    title: 'Veblen — Kinh tế học Thể chế',
+    figure: 'Thorstein Veblen (1857–1929)',
+    type: 'rose',
+    short: 'Tiêu dùng phô trương & thể chế xã hội',
+    desc: 'Veblen phê phán kinh tế học tân cổ điển vì bỏ qua vai trò của thể chế xã hội và tâm lý trong hành vi kinh tế. Ông nổi tiếng với khái niệm "tiêu dùng phô trương" — mua hàng hóa để thể hiện địa vị xã hội.',
+    ideas: ['Tiêu dùng phô trương (conspicuous consumption)', 'Thể chế xã hội định hình hành vi kinh tế', 'Phê phán "con người kinh tế" thuần lý (homo economicus)', 'Phân tích tầng lớp nhàn rỗi (leisure class)'],
+    works: ['The Theory of the Leisure Class (1899)', 'The Theory of Business Enterprise (1904)'],
+    influence: 'Veblen là tổ phụ của kinh tế học thể chế Mỹ. Tư tưởng của ông hưởng đến kinh tế học hành vi hiện đại và nghiên cứu về bất bình đẳng.'
+  },
+  {
+    id: 'keynes', year: 1936, label: '1936', era: 'modern',
+    milestone: true,
+    title: 'Keynes — Cuộc Cách mạng Keynes',
+    figure: 'John Maynard Keynes (1883–1946)',
+    type: 'gold',
+    short: '«Lý thuyết tổng quát» — Kinh tế vĩ mô ra đời',
+    desc: 'Giữa cuộc Đại Khủng hoảng 1929–1933, Keynes xuất bản tác phẩm làm thay đổi hoàn toàn kinh tế học. Ông bác bỏ quan điểm thị trường tự điều chỉnh và lập luận rằng chính phủ cần can thiệp tích cực để ổn định kinh tế.',
+    ideas: ['Tổng cầu (aggregate demand) quyết định sản lượng và việc làm', 'Bẫy thanh khoản: chính sách tiền tệ mất hiệu lực khi lãi suất = 0', 'Chính sách tài khóa mở rộng chống suy thoái (hiệu ứng số nhân)', 'Thất nghiệp không tự biến mất — thị trường lao động không tự cân bằng', 'Kỳ vọng và tâm lý đóng vai trò quan trọng'],
+    works: ['The General Theory of Employment, Interest and Money (1936)', 'A Tract on Monetary Reform (1923)', 'A Treatise on Money (1930)'],
+    influence: 'Keynes là nhà kinh tế học có ảnh hưởng nhất thế kỷ 20. Tư tưởng của ông định hình hệ thống Bretton Woods, IMF, World Bank và chính sách kinh tế vĩ mô của mọi chính phủ.'
+  },
+  {
+    id: 'hayek', year: 1944, label: '1944', era: 'modern',
+    milestone: true,
+    title: 'Hayek — Con đường dẫn đến Nông nô',
+    figure: 'Friedrich Hayek (1899–1992)',
+    type: 'teal',
+    short: 'Tri thức phân tán & tự phát thị trường',
+    desc: 'Hayek là đối thủ trí tuệ lớn nhất của Keynes và là người bảo vệ kiên định nhất của kinh tế thị trường. Ông lập luận rằng tri thức kinh tế bị phân tán trong xã hội và không có kế hoạch hóa tập trung nào có thể thay thế giá cả thị trường.',
+    ideas: ['Vấn đề tri thức: không ai có đủ thông tin để kế hoạch hóa kinh tế', 'Hệ thống giá cả là cơ chế truyền thông tin hiệu quả nhất', 'Trật tự tự phát (spontaneous order) xuất hiện không qua thiết kế', 'Kế hoạch hóa tập trung tất yếu dẫn đến độc tài', 'Lạm phát do mở rộng tín dụng quá mức'],
+    works: ['The Road to Serfdom (1944)', 'The Pure Theory of Capital (1941)', 'The Constitution of Liberty (1960)'],
+    influence: 'Hayek cùng Milton Friedman là trụ cột lý luận của phong trào tự do kinh tế (neoliberalism) thập niên 1970–80. Tư tưởng của ông ảnh hưởng trực tiếp đến cải cách Thatcher và Reagan.'
+  },
+  {
+    id: 'samuelson', year: 1948, label: '1948', era: 'modern',
+    title: 'Samuelson — Tổng hợp Tân cổ điển–Keynes',
+    figure: 'Paul Samuelson (1915–2009)',
+    type: 'blue',
+    short: 'Kết hợp vi kinh tế và vĩ kinh tế',
+    desc: 'Paul Samuelson tổng hợp vi kinh tế học tân cổ điển và vĩ kinh tế học Keynes thành một khuôn khổ thống nhất, được biết đến là "tổng hợp tân cổ điển" (neoclassical synthesis). Giáo trình Economics của ông định hình việc dạy kinh tế học trong nhiều thập kỷ.',
+    ideas: ['Kinh tế học có thể được toán học hóa hoàn toàn', 'Vi kinh tế và vĩ kinh tế có thể thống nhất trong một khuôn khổ', 'Hiển thị ưu tiên (revealed preference) trong lý thuyết người tiêu dùng', 'Điều kiện Samuelson cho hàng hóa công cộng'],
+    works: ['Foundations of Economic Analysis (1947)', 'Economics (1948, giáo trình tiêu chuẩn)'],
+    influence: 'Giáo trình Economics của Samuelson đào tạo nhiều thế hệ nhà kinh tế học. Ông là người Mỹ đầu tiên nhận Nobel Kinh tế (1970) và định hình chương trình kinh tế học toàn cầu.'
+  },
+  {
+    id: 'friedman', year: 1963, label: '1963', era: 'modern',
+    milestone: true,
+    title: 'Friedman — Chủ nghĩa Tiền tệ',
+    figure: 'Milton Friedman (1912–2006)',
+    type: 'gold',
+    short: 'Tiền tệ quan trọng — tự do kinh tế',
+    desc: 'Milton Friedman là nhà kinh tế học tự do kinh tế vĩ đại nhất thế kỷ 20, người phục hồi và phát triển tư tưởng của trường phái Chicago. Ông chứng minh vai trò trung tâm của cung tiền trong chu kỳ kinh tế và lạm phát.',
+    ideas: ['Lạm phát luôn và ở đâu cũng là hiện tượng tiền tệ', 'FED thắt chặt tiền tệ là nguyên nhân của Đại Khủng hoảng', 'Đường cong Phillips không tồn tại dài hạn (tỷ lệ thất nghiệp tự nhiên)', 'Tư nhân hóa, bãi bỏ quy định, thuế suất phẳng', 'Phiếu học bổng (school vouchers) thay thế giáo dục nhà nước'],
+    works: ['A Monetary History of the United States (1963)', 'Capitalism and Freedom (1962)', 'Free to Choose (1980)'],
+    influence: 'Friedman nhận Nobel 1976. Tư tưởng của ông là nền tảng của "Đồng thuận Washington" — chương trình cải cách kinh tế áp dụng cho các nước đang phát triển thập niên 1980–90.'
+  },
+  {
+    id: 'arrow_debreu', year: 1954, label: '1954', era: 'modern',
+    title: 'Arrow & Debreu — Cân bằng tổng thể',
+    figure: 'Kenneth Arrow & Gérard Debreu',
+    type: 'purple',
+    short: 'Chứng minh toán học cân bằng cạnh tranh',
+    desc: 'Arrow và Debreu đưa ra chứng minh toán học nghiêm ngặt đầu tiên về sự tồn tại và hiệu quả Pareto của cân bằng cạnh tranh tổng thể. Đây là thành tựu lý thuyết xuất sắc nhất của kinh tế học thế kỷ 20.',
+    ideas: ['Chứng minh sự tồn tại của cân bằng cạnh tranh tổng thể', 'Hai định lý phúc lợi cơ bản', 'Nền kinh tế thị trường cạnh tranh đạt hiệu quả Pareto', 'Không chắc chắn và thị trường hàng hóa dự phòng'],
+    works: ['Existence of an Equilibrium for a Competitive Economy (1954)'],
+    influence: 'Mô hình Arrow-Debreu là chuẩn mực lý thuyết của kinh tế học hiện đại và là nền tảng cho kinh tế học tài chính, lý thuyết trò chơi ứng dụng và thiết kế cơ chế.'
+  },
+  {
+    id: 'nash', year: 1950, label: '1950', era: 'modern',
+    title: 'John Nash — Cân bằng Nash',
+    figure: 'John Nash (1928–2015)',
+    type: 'teal',
+    short: 'Lý thuyết trò chơi & chiến lược tối ưu',
+    desc: 'John Nash mở rộng lý thuyết trò chơi của Von Neumann và Morgenstern bằng khái niệm "Cân bằng Nash" — trạng thái trong đó không ai có thể cải thiện kết quả của mình khi giữ nguyên chiến lược của người khác.',
+    ideas: ['Cân bằng Nash: không ai muốn thay đổi chiến lược đơn phương', 'Trò chơi không hợp tác (non-cooperative games)', 'Thương lượng Nash (Nash bargaining solution)', 'Ứng dụng rộng: đấu giá, cạnh tranh, quan hệ quốc tế'],
+    works: ['Equilibrium Points in N-Person Games (1950)', 'The Bargaining Problem (1950)'],
+    influence: 'Cân bằng Nash được ứng dụng trong thiết kế đấu giá (3G/4G), chính sách cạnh tranh, quan hệ quốc tế, và sinh học tiến hóa. Nash nhận Nobel 1994.'
+  },
+  {
+    id: 'development', year: 1955, label: '1955–1970', era: 'modern',
+    title: 'Kinh tế học Phát triển',
+    figure: 'Rostow, Lewis, Prebisch...',
+    type: 'green',
+    short: 'Hiểu về nghèo đói và tăng trưởng',
+    desc: 'Kinh tế học phát triển nổi lên như một lĩnh vực riêng sau Thế chiến II, tập trung vào câu hỏi tại sao một số nước giàu và một số nước nghèo. Các lý thuyết về giai đoạn tăng trưởng, bẫy thu nhập thấp, và phụ thuộc thương mại được tranh luận sôi nổi.',
+    ideas: ['Lý thuyết giai đoạn tăng trưởng của Rostow', 'Mô hình hai khu vực Lewis (nông nghiệp-công nghiệp)', 'Lý thuyết phụ thuộc (dependency theory) của Prebisch', 'Công nghiệp hóa thay thế nhập khẩu (ISI)', 'Bẫy nghèo (poverty trap) và vốn tối thiểu tới hạn'],
+    works: ['The Stages of Economic Growth — Rostow (1960)', 'Economic Development with Unlimited Supplies of Labour — Lewis (1954)'],
+    influence: 'Kinh tế học phát triển định hình chính sách viện trợ và phát triển từ thập niên 1960. Tranh luận giữa ISI và tự do hóa vẫn còn nóng trong chính sách công nghiệp ngày nay.'
+  },
+  {
+    id: 'stagflation', year: 1973, label: '1973–1979', era: 'modern',
+    title: 'Khủng hoảng Stagflation & Sụp đổ Keynes',
+    figure: 'OPEC, Nixon, Carter...',
+    type: 'rose',
+    short: 'Lạm phát đình trệ thách thức lý thuyết',
+    desc: 'Khủng hoảng dầu mỏ 1973 và 1979 tạo ra stagflation — lạm phát cao kết hợp thất nghiệp cao — điều mà lý thuyết Keynes không giải thích được. Đây là bước ngoặt chính trị đẩy các nền kinh tế Tây phương sang chính sách tiền tệ nghiêm ngặt và tự do hóa.',
+    ideas: ['Stagflation = lạm phát + thất nghiệp cao đồng thời', 'Đường cong Phillips sụp đổ trong thực tế', 'Kỳ vọng lý trí (rational expectations) bác bỏ hiệu lực chính sách', 'Thời điểm vàng cho tư tưởng Friedman và Hayek'],
+    works: ['Lucas Critique (1976)', 'Time Inconsistency — Kydland & Prescott (1977)'],
+    influence: 'Stagflation dẫn đến cuộc cách mạng tiền tệ (Volcker shock 1980), thắng cử của Thatcher (1979) và Reagan (1980), mở đầu kỷ nguyên neoliberal toàn cầu.'
+  },
+  {
+    id: 'behavioral', year: 1979, label: '1979', era: 'modern',
+    milestone: true,
+    title: 'Kahneman & Tversky — Kinh tế học Hành vi',
+    figure: 'Kahneman, Tversky, Thaler',
+    type: 'purple',
+    short: 'Con người không thuần lý như lý thuyết',
+    desc: 'Kahneman và Tversky công bố lý thuyết triển vọng (Prospect Theory), chứng minh bằng thực nghiệm rằng con người ra quyết định theo những lối thiên kiến có hệ thống, không tuân theo lý thuyết hữu dụng kỳ vọng cổ điển.',
+    ideas: ['Lý thuyết triển vọng: thua lỗ gây đau nhiều hơn lợi nhuận mang lại vui', 'Thiên kiến có sẵn (availability heuristic)', 'Hiệu ứng đóng khung (framing effect)', 'Nudge: thiết kế lựa chọn để thay đổi hành vi', 'Con người là "irrational" theo lối có thể dự đoán'],
+    works: ['Prospect Theory — Kahneman & Tversky (1979)', 'Thinking, Fast and Slow — Kahneman (2011)', 'Nudge — Thaler & Sunstein (2008)'],
+    influence: 'Kahneman nhận Nobel 2002, Thaler nhận Nobel 2017. Kinh tế học hành vi định hình chính sách tiết kiệm hưu trí, chính sách y tế công cộng và thiết kế quy định tài chính.'
+  },
+  {
+    id: 'information', year: 1970, label: '1970–1980', era: 'modern',
+    title: 'Kinh tế học Thông tin',
+    figure: 'Akerlof, Spence, Stiglitz',
+    type: 'blue',
+    short: 'Thông tin bất cân xứng & thất bại thị trường',
+    desc: 'Akerlof (1970) chứng minh rằng thông tin bất cân xứng có thể làm thị trường sụp đổ hoàn toàn qua mô hình "thị trường xe cũ". Spence và Stiglitz mở rộng thành lý thuyết tín hiệu và sàng lọc thông tin.',
+    ideas: ['Thông tin bất cân xứng làm thị trường hoạt động kém', '"Quả chanh" Akerlof: người bán biết chất lượng, người mua không', 'Lựa chọn bất lợi (adverse selection) và rủi ro đạo đức (moral hazard)', 'Tín hiệu (signaling): học đại học để báo hiệu năng lực', 'Sàng lọc (screening) trong bảo hiểm và tín dụng'],
+    works: ['The Market for Lemons — Akerlof (1970)', 'Job Market Signaling — Spence (1973)'],
+    influence: 'Akerlof, Spence, Stiglitz nhận Nobel 2001. Lý thuyết thông tin giải thích thiết kế hợp đồng, quy định tài chính, bảo hiểm y tế và nhiều chính sách công quan trọng.'
+  },
+  {
+    id: 'endogenous', year: 1986, label: '1986–1995', era: 'contemporary',
+    milestone: true,
+    title: 'Lý thuyết Tăng trưởng Nội sinh',
+    figure: 'Paul Romer, Robert Lucas',
+    type: 'green',
+    short: 'Tri thức và công nghệ tự tạo ra tăng trưởng',
+    desc: 'Paul Romer và Robert Lucas phát triển lý thuyết tăng trưởng nội sinh, giải thích tại sao một số nước không rơi vào bẫy tăng trưởng thấp. Tri thức, R&D và vốn con người có ngoại tác tích cực, khiến lợi nhuận theo quy mô tăng dần.',
+    ideas: ['Tri thức là hàng hóa phi cạnh tranh và không loại trừ', 'R&D và đổi mới sáng tạo là nguồn gốc tăng trưởng dài hạn', 'Vốn con người (human capital) có lợi nhuận xã hội vượt lợi nhuận cá nhân', 'Hội tụ có điều kiện — nước giàu không nhất thiết tăng trưởng chậm hơn'],
+    works: ['Increasing Returns and Long-Run Growth — Romer (1986)', 'On the Mechanics of Economic Development — Lucas (1988)'],
+    influence: 'Lý thuyết tăng trưởng nội sinh biện hộ cho đầu tư nhà nước vào giáo dục, R&D và cơ sở hạ tầng. Paul Romer nhận Nobel 2018.'
+  },
+  {
+    id: 'institutional_new', year: 1990, label: '1990', era: 'contemporary',
+    title: 'Kinh tế học Thể chế mới',
+    figure: 'Douglass North, Oliver Williamson',
+    type: 'teal',
+    short: 'Thể chế định hình tăng trưởng dài hạn',
+    desc: 'Douglass North lập luận rằng thể chế — luật pháp, quyền tài sản, chuẩn mực xã hội — là yếu tố quyết định tăng trưởng kinh tế dài hạn. Williamson phân tích chi phí giao dịch trong quyết định tổ chức doanh nghiệp.',
+    ideas: ['Thể chế = ràng buộc do con người đặt ra, định hình động cơ', 'Quyền tài sản rõ ràng là điều kiện tiên quyết cho tăng trưởng', 'Chi phí giao dịch giải thích cấu trúc công ty và hợp đồng', 'Phụ thuộc lịch sử (path dependence): quá khứ định hình hiện tại'],
+    works: ['Institutions, Institutional Change and Economic Performance — North (1990)', 'The Economic Institutions of Capitalism — Williamson (1985)'],
+    influence: 'North nhận Nobel 1993, Williamson nhận Nobel 2009. Kinh tế học thể chế định hình chương trình cải cách thể chế của World Bank và IMF.'
+  },
+  {
+    id: 'globalisation', year: 1995, label: '1995–2008', era: 'contemporary',
+    title: 'Toàn cầu hóa & WTO',
+    figure: 'Krugman, Bhagwati...',
+    type: 'blue',
+    short: 'Thương mại, địa lý và bất bình đẳng mới',
+    desc: 'Thành lập WTO 1995 đánh dấu đỉnh cao của tự do hóa thương mại. Paul Krugman phát triển "lý thuyết thương mại mới" giải thích tại sao các nước tương tự nhau vẫn buôn bán nhiều với nhau, và khám phá vai trò của quy mô kinh tế và địa lý.',
+    ideas: ['Lý thuyết thương mại mới: lợi thế theo quy mô + cạnh tranh độc quyền', 'Địa kinh tế học: tại sao công nghiệp tập trung ở một số nơi', 'Toàn cầu hóa tạo ra người thắng lớn và người thua lớn', 'Mô hình Heckscher-Ohlin thực nghiệm — nghịch lý Leontief'],
+    works: ['Increasing Returns, Monopolistic Competition and International Trade — Krugman (1979)', 'Geography and Trade — Krugman (1991)'],
+    influence: 'Krugman nhận Nobel 2008. Nghiên cứu của ông và Autor về "China shock" định hình tranh luận về toàn cầu hóa và bất bình đẳng hiện nay.'
+  },
+  {
+    id: 'gfc', year: 2008, label: '2008–2009', era: 'contemporary',
+    milestone: true,
+    title: 'Đại Khủng hoảng Tài chính 2008',
+    figure: 'Lehman Brothers, Fed, IMF...',
+    type: 'rose',
+    short: 'Khủng hoảng tài chính toàn cầu nghiêm trọng nhất từ 1929',
+    desc: 'Sự sụp đổ của Lehman Brothers tháng 9/2008 kích hoạt cuộc khủng hoảng tài chính toàn cầu nghiêm trọng nhất kể từ Đại Khủng hoảng 1929. Khủng hoảng phơi bày những lỗ hổng trong mô hình "thị trường tự điều chỉnh" và dẫn đến sự phục hưng của tư tưởng Keynes.',
+    ideas: ['Rủi ro hệ thống (systemic risk) trong hệ thống tài chính liên kết', 'Ngân hàng "quá lớn để sụp đổ" (too big to fail)', 'Gói kích thích tài khóa khổng lồ — phục hưng Keynes', 'Chính sách lãi suất bằng 0 và nới lỏng định lượng (QE)', 'Bẫy thanh khoản trở lại'],
+    works: ['The Big Short — Michael Lewis (2010)', 'Too Big to Fail — Andrew Ross Sorkin (2009)'],
+    influence: 'Khủng hoảng 2008 buộc tái cấu trúc quy định tài chính toàn cầu (Basel III, Dodd-Frank) và kéo dài thập kỷ tăng trưởng chậm ở phương Tây.'
+  },
+  {
+    id: 'piketty', year: 2013, label: '2013', era: 'contemporary',
+    milestone: true,
+    title: 'Piketty — Tư bản trong thế kỷ 21',
+    figure: 'Thomas Piketty (1971–)',
+    type: 'purple',
+    short: 'r > g: Bất bình đẳng ngày càng tăng',
+    desc: 'Thomas Piketty phân tích dữ liệu lịch sử của hàng chục quốc gia trong hơn 200 năm và kết luận: khi tỷ suất lợi nhuận trên vốn (r) vượt tốc độ tăng trưởng kinh tế (g), bất bình đẳng tài sản tất yếu gia tăng.',
+    ideas: ['r > g là quy luật cơ bản của chủ nghĩa tư bản', 'Bất bình đẳng tài sản ở mức cao nhất lịch sử gần 100 năm qua', 'Thuế tài sản lũy tiến toàn cầu là giải pháp', 'Vốn tư nhân tăng, vốn công cộng giảm ở các nước phát triển'],
+    works: ['Capital in the Twenty-First Century (2013)', 'Capital and Ideology (2019)'],
+    influence: 'Tác phẩm của Piketty tạo làn sóng tranh luận toàn cầu về bất bình đẳng, và ảnh hưởng đến chính sách thuế tài sản và thảo luận về "Wealth Tax" ở nhiều quốc gia.'
+  },
+  {
+    id: 'degrowth_climate', year: 2020, label: '2020s', era: 'contemporary',
+    title: 'Kinh tế học Khí hậu & Phi tăng trưởng',
+    figure: 'Nordhaus, Daly, Raworth...',
+    type: 'green',
+    short: 'Kinh tế học trước thách thức sinh thái',
+    desc: 'Cuộc khủng hoảng khí hậu và đại dịch Covid-19 thúc đẩy làn sóng tư duy lại về tăng trưởng kinh tế. Kinh tế học hành tinh hình khuyên (Doughnut Economics) của Kate Raworth đặt câu hỏi liệu GDP có phải là thước đo phát triển đúng đắn.',
+    ideas: ['Giá carbon và thị trường phát thải là công cụ hiệu quả nhất', 'Kinh tế học phi tăng trưởng (degrowth) ở các nước phát triển', 'Mô hình hình khuyên: nhu cầu xã hội + giới hạn hành tinh', 'Kinh tế học hạnh phúc (wellbeing economics)', 'Tái phân phối > tăng trưởng ở các nước giàu'],
+    works: ['Doughnut Economics — Raworth (2017)', 'The Economics of Climate Change — Stern (2006)', 'Small is Beautiful — Schumacher (1973)'],
+    influence: 'William Nordhaus nhận Nobel 2018 cho kinh tế học khí hậu. Tư tưởng phi tăng trưởng đang ảnh hưởng đến chính sách của New Zealand, Scotland và các thành phố lớn Châu Âu.'
+  }
+];
+
+const ERAS = {
+  ancient:      { label: 'Cổ đại & Trung Cổ', start: -400, end: 1500, color: '#7A6F68' },
+  mercantile:   { label: 'Trọng thương & Trọng nông', start: 1500, end: 1776, color: '#A8761A' },
+  classical:    { label: 'Kinh tế học Cổ điển', start: 1776, end: 1870, color: '#1A3A6B' },
+  neoclassical: { label: 'Tân Cổ điển & Cận biên', start: 1870, end: 1930, color: '#5A3A8B' },
+  modern:       { label: 'Kinh tế học Hiện đại', start: 1930, end: 1990, color: '#1A6B5C' },
+  contemporary: { label: 'Đương đại', start: 1990, end: 2030, color: '#2D6B2D' }
+};
+
+const TYPE_COLORS = {
+  gold:   { bg:'#FBF5E6', border:'#A8761A', text:'#7A5010', dot:'#A8761A' },
+  teal:   { bg:'#E8F5F2', border:'#1A6B5C', text:'#0F4D42', dot:'#1A6B5C' },
+  rose:   { bg:'#F5E8E8', border:'#9B3A3A', text:'#7A2828', dot:'#9B3A3A' },
+  blue:   { bg:'#E8EEF8', border:'#1A3A6B', text:'#0F2850', dot:'#1A3A6B' },
+  purple: { bg:'#F0EAF8', border:'#5A3A8B', text:'#3D2560', dot:'#5A3A8B' },
+  green:  { bg:'#E8F2E8', border:'#2D6B2D', text:'#1A4A1A', dot:'#2D6B2D' }
+};
+
+let zoom = 1.0;
+const BASE_PX_PER_YEAR = 3.5;
+const YEAR_MIN = -450;
+const YEAR_MAX = 2035;
+const AXIS_Y = 320;
+const CANVAS_PADDING = 100;
+
+function yearToX(year) {
+  return CANVAS_PADDING + (year - YEAR_MIN) * BASE_PX_PER_YEAR * zoom;
+}
+
+function totalWidth() {
+  return CANVAS_PADDING * 2 + (YEAR_MAX - YEAR_MIN) * BASE_PX_PER_YEAR * zoom;
+}
+
+let currentFilter = 'all';
+
+function changeZoom(delta) {
+  zoom = Math.max(0.4, Math.min(3.0, zoom + delta));
+  document.getElementById('zoom-label').textContent = 'Thu phóng: ' + zoom.toFixed(1) + '×';
+  render();
+}
+
+function jumpToEra(era) {
+  currentFilter = era;
+  document.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+  if (era !== 'all') {
+    const eraData = ERAS[era];
+    if (eraData) {
+      const wrapper = document.getElementById('timelineWrapper');
+      const x = yearToX(eraData.start) - 200;
+      wrapper.scrollTo({ left: Math.max(0, x), behavior: 'smooth' });
+    }
+  }
+}
+
+function render() {
+  const canvas = document.getElementById('canvas');
+  canvas.style.width = totalWidth() + 'px';
+  canvas.innerHTML = '';
+
+  // ERA BANDS
+  Object.entries(ERAS).forEach(([key, era]) => {
+    const x1 = yearToX(era.start);
+    const x2 = yearToX(era.end);
+    const band = document.createElement('div');
+    band.className = 'era-band';
+    band.style.cssText = `left:${x1}px;width:${x2-x1}px;background:${era.color};`;
+    canvas.appendChild(band);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'era-band-label';
+    lbl.style.cssText = `left:${x1 + 10}px;`;
+    lbl.textContent = era.label;
+    canvas.appendChild(lbl);
+  });
+
+  // ERA SEGMENTS on axis
+  const eraSegments = [
+    { start: -400, end: 1776, color: '#B0A89E' },
+    { start: 1776, end: 1870, color: '#A8761A' },
+    { start: 1870, end: 1936, color: '#5A3A8B' },
+    { start: 1936, end: 1990, color: '#1A6B5C' },
+    { start: 1990, end: 2030, color: '#2D6B2D' }
+  ];
+  eraSegments.forEach(s => {
+    const seg = document.createElement('div');
+    seg.className = 'era-segment';
+    seg.style.cssText = `left:${yearToX(s.start)}px;width:${yearToX(s.end)-yearToX(s.start)}px;top:${AXIS_Y}px;background:${s.color};`;
+    canvas.appendChild(seg);
+  });
+
+  // AXIS LINE
+  const axis = document.createElement('div');
+  axis.className = 'axis-line';
+  axis.style.top = AXIS_Y + 'px';
+  canvas.appendChild(axis);
+
+  // YEAR TICKS
+  const tickYears = [-300, 0, 500, 1000, 1500, 1600, 1700, 1776, 1800, 1848, 1871, 1900, 1920, 1936, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2030];
+  tickYears.forEach(yr => {
+    const tick = document.createElement('div');
+    tick.className = 'year-tick';
+    tick.style.cssText = `left:${yearToX(yr)}px;top:${AXIS_Y - 4}px;`;
+    const line = document.createElement('div');
+    line.className = 'year-tick-line';
+    line.style.height = '8px';
+    const lbl = document.createElement('div');
+    lbl.className = 'year-tick-label';
+    lbl.textContent = yr < 0 ? Math.abs(yr) + ' TCN' : yr;
+    tick.appendChild(line);
+    tick.appendChild(lbl);
+    canvas.appendChild(tick);
+  });
+
+  // EVENT CARDS
+  const filtered = currentFilter === 'all' ? EVENTS : EVENTS.filter(e => e.era === currentFilter);
+  
+  const aboveBelow = {};
+  let aboveCount = 0, belowCount = 0;
+  filtered.forEach(ev => {
+    // Alternate above and below
+    const above = aboveCount <= belowCount;
+    aboveBelow[ev.id] = above;
+    if (above) aboveCount++; else belowCount++;
+  });
+
+  filtered.forEach((ev, i) => {
+    const x = yearToX(ev.year);
+    const above = aboveBelow[ev.id];
+    const colors = TYPE_COLORS[ev.type] || TYPE_COLORS.teal;
+
+    // Dot
+    const dot = document.createElement('div');
+    dot.className = 'node-dot' + (ev.milestone ? ' milestone-dot' : '');
+    dot.style.cssText = `left:${x}px;top:${AXIS_Y}px;background:${colors.dot};`;
+    dot.onclick = () => openModal(ev.id);
+    canvas.appendChild(dot);
+
+    // Connector
+    const cardH = ev.milestone ? 170 : 150;
+    const gap = 24;
+    const connY = above ? AXIS_Y - gap - cardH : AXIS_Y + gap;
+    const connH = cardH + gap;
+    const conn = document.createElement('div');
+    conn.className = 'connector';
+    conn.style.cssText = `left:${x}px;top:${above ? connY : AXIS_Y}px;height:${connH}px;border-left:1.5px dashed ${colors.border};width:1px;transform:none;`;
+    canvas.appendChild(conn);
+
+    // Card
+    const card = document.createElement('div');
+    card.className = 'event-card' + (ev.milestone ? ' milestone' : '') + (above ? '' : ' below');
+    const cardW = ev.milestone ? 220 : 200;
+    let cardLeft = x - cardW / 2;
+    card.style.cssText = `
+      left:${cardLeft}px;
+      top:${above ? connY - 0 : AXIS_Y + gap + connH - cardH}px;
+      width:${cardW}px;
+      background:${colors.bg};
+      border-color:${colors.border};
+    `;
+    card.onclick = () => openModal(ev.id);
+
+    let html = '';
+    if (ev.milestone) {
+      html += `<div class="card-milestone-badge" style="background:${colors.border};color:white;">★ Mốc chính</div>`;
+    }
+    html += `<div class="card-date" style="color:${colors.text};">${ev.label}</div>`;
+    html += `<div class="card-title" style="color:${colors.text};">${ev.title}</div>`;
+    if (ev.figure) html += `<div class="card-figure" style="color:${colors.text};opacity:0.75;">${ev.figure}</div>`;
+    html += `<div class="card-hint">· nhấp xem chi tiết</div>`;
+    card.innerHTML = html;
+    canvas.appendChild(card);
+  });
+
+  canvas.style.minHeight = (AXIS_Y + 380) + 'px';
+}
+
+function openModal(id) {
+  const ev = EVENTS.find(e => e.id === id);
+  if (!ev) return;
+  const colors = TYPE_COLORS[ev.type] || TYPE_COLORS.teal;
+  const eraData = ERAS[ev.era] || {};
+
+  document.getElementById('modalHeader').innerHTML = `
+    <div class="modal-era-badge" style="background:${colors.bg};color:${colors.text};border:1px solid ${colors.border};">
+      ${eraData.label || ev.era}
+    </div>
+    <div class="modal-date" style="color:${colors.text};">${ev.label}</div>
+    <div class="modal-title">${ev.title}</div>
+    ${ev.figure ? `<div class="modal-figure">${ev.figure}</div>` : ''}
+  `;
+
+  let bodyHtml = `<p class="modal-desc">${ev.desc}</p>`;
+
+  if (ev.ideas && ev.ideas.length) {
+    bodyHtml += `<div class="modal-section-title">Tư tưởng / Đóng góp chính</div>`;
+    bodyHtml += `<ul class="modal-ideas">` + ev.ideas.map(i => `<li>${i}</li>`).join('') + `</ul>`;
+  }
+
+  if (ev.works && ev.works.length) {
+    bodyHtml += `<div class="modal-section-title">Tác phẩm tiêu biểu</div>`;
+    bodyHtml += `<div class="modal-works">` + ev.works.map(w => `<span class="work-tag">${w}</span>`).join('') + `</div>`;
+  }
+
+  if (ev.influence) {
+    bodyHtml += `<div class="modal-section-title">Ảnh hưởng & Di sản</div>`;
+    bodyHtml += `<div class="modal-influence">${ev.influence}</div>`;
+  }
+
+  document.getElementById('modalBody').innerHTML = bodyHtml;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalDirect();
+  if (e.key === 'ArrowRight') document.getElementById('timelineWrapper').scrollBy({ left: 200, behavior: 'smooth' });
+  if (e.key === 'ArrowLeft') document.getElementById('timelineWrapper').scrollBy({ left: -200, behavior: 'smooth' });
+});
+
+// DRAG TO SCROLL
+const wrapper = document.getElementById('timelineWrapper');
+let isDragging = false, startX, scrollLeft;
+wrapper.addEventListener('mousedown', e => {
+  isDragging = true;
+  startX = e.pageX - wrapper.offsetLeft;
+  scrollLeft = wrapper.scrollLeft;
+  wrapper.style.cursor = 'grabbing';
+});
+wrapper.addEventListener('mouseleave', () => { isDragging = false; wrapper.style.cursor = 'grab'; });
+wrapper.addEventListener('mouseup', () => { isDragging = false; wrapper.style.cursor = 'grab'; });
+wrapper.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - wrapper.offsetLeft;
+  wrapper.scrollLeft = scrollLeft - (x - startX);
+});
+
+render();
+
+// Set initial canvas height
+document.getElementById('canvas').style.minHeight = (AXIS_Y + 380) + 'px';
+</script>
+</body>
+</html>
